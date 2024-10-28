@@ -1,0 +1,28 @@
+CC = gcc
+CCFLAGS = -Wall -Wextra -Werror #-g3 -fsanitize=address -fsanitize=undefined -fno-sanitize-recover=all -fsanitize=float-divide-by-zero -fsanitize=float-cast-overflow -fno-sanitize=null -fno-sanitize=alignment
+
+all: s21_cat
+
+s21_cat:
+	$(CC) $(CCFLAGS) cat.c -o s21_cat
+
+clean: clear_test
+	find ./../ -type f -name 's21_*'  		-delete
+	find ./../ -type f -name '*.gch'  			-delete
+	find ./../ -type f -name '*.o'    			-delete
+	find ./../ -type f -name 'a'      			-delete
+	find ./../ -name '*.dSYM'      				-exec rm -rv {} +
+	find ./../ -type f -name '*.out'  			-delete
+
+format_project:
+	find ../ -iname '*.c' | xargs clang-format -i
+	find ../ -iname '*.h' | xargs clang-format -i
+	cppcheck --check-config --enable=all --suppress=missingIncludeSystem ../
+
+tests:
+	$(CC) $(CCFLAGS) test_cat.c -o s21_test_cat
+	./s21_test_cat
+
+clear_test:
+	find ./../ -type f -name 'tt*'  		-delete
+	find ./../ -type f -name 'tt'  		-delete
